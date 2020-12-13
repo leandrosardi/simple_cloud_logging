@@ -97,6 +97,13 @@ C:\source>ruby example03.rb
 done
 ```
 
+### Writing logs in the cloud
+
+*pending*
+
+### Setting up log keywords alerts
+
+*pending*
 
 ## Versioning
 
