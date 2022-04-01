@@ -17,7 +17,7 @@ module BlackStack
     def reset()
       super
 =begin
-      url = "#{self.api_protocol}://#{self.api_domain}:#{self.api_port.to_s}/api1.4/scl/reset.json"
+      url = "#{self.api_protocol}://#{self.api_domain}:#{self.api_port.to_s}/api1.3/threads/reset.json"
       res = BlackStack::Netting::api_call(url, {
         'api_key' => self.api_key,
         'filename' => self.filename,
@@ -29,7 +29,7 @@ module BlackStack
     def log(s, datetime=nil)
       ltext = super(s, datetime)
 =begin
-      url = "#{self.api_protocol}://#{self.api_domain}:#{self.api_port.to_s}/api1.4/scl/log.json"
+      url = "#{self.api_protocol}://#{self.api_domain}:#{self.api_port.to_s}/api1.3/threads/log.json"
       res = BlackStack::Netting::api_call(url, {
         'api_key' => self.api_key,
         'filename' => self.filename,
@@ -44,7 +44,7 @@ module BlackStack
     def logs(s, datetime=nil)
       ltext = super(s, datetime)
 =begin
-      url = "#{self.api_protocol}://#{self.api_domain}:#{self.api_port.to_s}/api1.4/scl/log.json"
+      url = "#{self.api_protocol}://#{self.api_domain}:#{self.api_port.to_s}/api1.3/threads/log.json"
       res = BlackStack::Netting::api_call(url, {
         'api_key' => self.api_key,
         'filename' => self.filename,
@@ -59,7 +59,7 @@ module BlackStack
     def logf(s, datetime=nil)
       ltext = super(s, datetime)
 =begin
-      url = "#{self.api_protocol}://#{self.api_domain}:#{self.api_port.to_s}/api1.4/scl/log.json"
+      url = "#{self.api_protocol}://#{self.api_domain}:#{self.api_port.to_s}/api1.3/threads/log.json"
       res = BlackStack::Netting::api_call(url, {
         'api_key' => self.api_key,
         'filename' => self.filename,
@@ -73,7 +73,7 @@ module BlackStack
 
     def release()
 =begin
-      url = "#{self.api_url}:#{self.api_port.to_s}/api1.4/scl/release.json"
+      url = "#{self.api_url}:#{self.api_port.to_s}/api1.3/threads/release.json"
       res = BlackStack::Netting::api_call(url, {
         'api_key' => self.api_key,
         'filename' => self.filename, 

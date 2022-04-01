@@ -14,11 +14,7 @@ Email to me if you want to collaborate, by testing this library in any Linux pla
 gem install simple_cloud_logging
 ```
 
-## Running the tests
-
-Here are some tests about how to use this gem properly, and how to avoid some common mistakes.
-
-### Writing simple logs in the local host
+## Writing simple logs in the local host
 
 ```ruby
 require 'simple_cloud_logging'
@@ -38,13 +34,13 @@ end
 ```
 
 ```
-C:\source>ruby example01.rb
+ruby example01.rb
 
 20191105204211:Declare variable... done
 20191105204211:Check if 5>5... no
 ```
 
-### Writing nested logs in the local host
+## Writing nested logs in the local host
 
 ```ruby
 require 'simple_cloud_logging'
@@ -72,7 +68,7 @@ logger.done
 ```
 
 ```
-C:\source>ruby example03.rb
+ruby example03.rb
 
 20191105204410:Declare array of array of numbers... done
 20191105204410:Process array of array elements...
@@ -97,13 +93,29 @@ C:\source>ruby example03.rb
 done
 ```
 
-### Writing logs in the cloud
+## Dummy logging
 
-*pending*
+The methods of the `DummyLogger` class just do nothing.
 
-### Setting up log keywords alerts
+You can choose between `LocalLogger` or `DummyLogger` depending if you want to write log or not, dynamically.
 
-*pending*
+Example: 
+
+```ruby
+class FooClass
+    attr_accessor :logger
+
+    def initialize(the_logger=nil)
+        self.logger=the_logger
+        self.logger = BlackStack::DummyLogger.new() if self.logger.nil? # assign a dummy logger that just generate output on the screen
+    end
+
+    def do_something()
+      self.logger.logs 'This log line will show up in the console only if the logger is not a DummyLogger instance...'
+      self.logger.done
+    end
+end # class FooClass
+```
 
 ## Versioning
 
