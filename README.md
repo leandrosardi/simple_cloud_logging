@@ -2,11 +2,16 @@
 
 Easy library to write log files in the cloud, watch them anywhere, and enbed the log in any website. 
 
-This gem has been designed as a part of the **BlackStack** framework.
-
-I ran tests in Windows environments only.
-
 Email to me if you want to collaborate, by testing this library in any Linux platform.
+
+# Supported Operative Systems
+
+I tested this library in the following operative systems:
+
+- Ubuntu 18.4,
+- Ubuntu 20.4,
+- Windows Server 2008,
+- Windows Server 2012.
 
 ## Installing
 
@@ -135,4 +140,8 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Further Work
+
+1. HTML/Javascript widget to connect any server via SSH and pull the log lines to a web dashboard. 
