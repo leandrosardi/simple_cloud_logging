@@ -14,12 +14,12 @@ Email to me if you want to collaborate, by testing this library in any Linux pla
 gem install simple_cloud_logging
 ```
 
-## Writing simple logs in the local host
+## Writing simple log lines
 
 ```ruby
 require 'simple_cloud_logging'
 
-logger = BlackStack::LocalLogger.new('./example01.log')
+logger = BlackStack::BaseLogger.new()
 
 logger.logs("Declare variable... ")
 @n = 5
@@ -40,12 +40,12 @@ ruby example01.rb
 20191105204211:Check if 5>5... no
 ```
 
-## Writing nested logs in the local host
+## Writing nested log lines
 
 ```ruby
 require 'simple_cloud_logging'
 
-logger = BlackStack::LocalLogger.new('./example03.log')
+logger = BlackStack::BaseLogger.new()
 
 logger.logs("Declare array of array of numbers... ")
 @a = [[1,2,3],[4,5,6],[7,8,9,10]] 
@@ -91,6 +91,14 @@ ruby example03.rb
  >  > Check if 10>5... yes
  > done
 done
+```
+
+## Saving Log in the Filesystem
+
+Use the `LocalLogger` class instead `BaseLogger`.
+
+```ruby
+logger = BlackStack::LocalLogger.new('./example01.log')
 ```
 
 ## Dummy logging
