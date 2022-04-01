@@ -24,7 +24,7 @@ gem install simple_cloud_logging
 ```ruby
 require 'simple_cloud_logging'
 
-logger = BlackStack::BaseLogger.new()
+logger = BlackStack::BaseLogger.new(nil)
 
 logger.logs("Declare variable... ")
 @n = 5
@@ -50,7 +50,7 @@ ruby example01.rb
 ```ruby
 require 'simple_cloud_logging'
 
-logger = BlackStack::BaseLogger.new()
+logger = BlackStack::BaseLogger.new(nil)
 
 logger.logs("Declare array of array of numbers... ")
 @a = [[1,2,3],[4,5,6],[7,8,9,10]] 
@@ -120,7 +120,7 @@ class FooClass
 
     def initialize(the_logger=nil)
         self.logger=the_logger
-        self.logger = BlackStack::DummyLogger.new() if self.logger.nil? # assign a dummy logger that just generate output on the screen
+        self.logger = BlackStack::DummyLogger.new(nil) if self.logger.nil? # assign a dummy logger that just generate output on the screen
     end
 
     def do_something()

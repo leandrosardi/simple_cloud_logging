@@ -13,7 +13,7 @@ module BlackStack
       self.number_of_lines_in_current_level = 0      
     end
     
-    def initialize(the_filename)
+    def initialize(the_filename=nil)
       self.filename = the_filename
       self.initialize_attributes
     end
