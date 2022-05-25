@@ -130,6 +130,13 @@ class FooClass
 end # class FooClass
 ```
 
+## Change Log
+
+| Version |                                                          |
+|---------|----------------------------------------------------------|
+| 1.1.x   | Supporting Ruby 2.2.4                                    |
+| 1.2.x   | Supporting Ruby 3.1.2 (refer to https://github.com/leandrosardi/simple_cloud_logging/issues/3 for more information) |
+
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the last [ruby gem](https://rubygems.org/gems/simple_command_line_parser). 
