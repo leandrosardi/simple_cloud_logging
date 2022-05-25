@@ -1,4 +1,4 @@
-require 'blackstack_commons'
+require 'blackstack-core'
 require_relative './dummylogger'
 require_relative './locallogger'
 require_relative './remotelogger'
