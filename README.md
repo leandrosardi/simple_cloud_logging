@@ -143,6 +143,7 @@ class FooClass
 
     def do_something()
       self.logger.logs 'This log line will show up in the console only if the logger is not a DummyLogger instance...'
+      # do something here
       self.logger.done
     end
 end # class FooClass
