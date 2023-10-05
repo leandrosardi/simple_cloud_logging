@@ -1,10 +1,6 @@
 # Simple Cloud Logging
 
-Easy library to write log files in the cloud, watch them anywhere, and enbed the log in any website. 
-
-Email to me if you want to collaborate, by testing this library in any Linux platform.
-
-# Supported Operative Systems
+Very simple library to write log files. 
 
 I tested this library in the following operative systems:
 
@@ -13,25 +9,41 @@ I tested this library in the following operative systems:
 - Windows Server 2008,
 - Windows Server 2012.
 
-## Installing
+Email to me if you want to collaborate.
+
+**Outline**
+
+1. [Installation](#1-installation)
+2. [Getting Started](#2-getting-started)
+3. [Nested Logging](#3-nested-logging)
+4. [Persistent Logging](#4-persistent-logging)
+5. [Dummy Logging](#5-dummy-logging)
+
+## 1. Installation
 
 ```
 gem install simple_cloud_logging
 ```
 
-## Writing simple log lines
+## 2. Getting Started
+
+Create a new file:
+
+```bash
+touch ~/example.rb
+```
 
 ```ruby
 require 'simple_cloud_logging'
 
 logger = BlackStack::BaseLogger.new(nil)
 
-logger.logs("Declare variable... ")
-@n = 5
+logger.logs("Get random number... ")
+@n = rand(10)
 logger.done
 
-logger.logs("Check if #{@n.to_s}>5... ")
-if @n>5
+logger.logs("Check if #{@n.to_s}>=5... ")
+if @n>=5
   logger.yes
 else
   logger.no
@@ -39,13 +51,15 @@ end
 ```
 
 ```
-ruby example01.rb
+ruby ~/example.rb
+```
 
+```
 20191105204211:Declare variable... done
 20191105204211:Check if 5>5... no
 ```
 
-## Writing nested log lines
+## 3. Nested Logging
 
 ```ruby
 require 'simple_cloud_logging'
@@ -73,8 +87,10 @@ logger.done
 ```
 
 ```
-ruby example03.rb
+ruby ~/example.rb
+```
 
+```
 20191105204410:Declare array of array of numbers... done
 20191105204410:Process array of array elements...
  > Process array of numbers...
@@ -98,21 +114,23 @@ ruby example03.rb
 done
 ```
 
-## Saving Log in the Filesystem
+## 4. Persistent Logging
 
 Use the `LocalLogger` class instead `BaseLogger`.
 
 ```ruby
-logger = BlackStack::LocalLogger.new('./example01.log')
+logger = BlackStack::LocalLogger.new('./example.log')
 ```
 
-## Dummy logging
+## 5. Dummy Logging
 
 The methods of the `DummyLogger` class just do nothing.
 
 You can choose between `LocalLogger` or `DummyLogger` depending if you want to write log or not, dynamically.
 
-Example: 
+`DummyLogger` is used to pass or not a logger to a function, for deep-nested logging.
+
+**Example:** 
 
 ```ruby
 class FooClass
@@ -129,13 +147,6 @@ class FooClass
     end
 end # class FooClass
 ```
-
-## Change Log
-
-| Version |                                                          |
-|---------|----------------------------------------------------------|
-| 1.1.x   | Supporting Ruby 2.2.4                                    |
-| 1.2.x   | Supporting Ruby 3.1.2 (refer to https://github.com/leandrosardi/simple_cloud_logging/issues/3 for more information) |
 
 ## Versioning
 
