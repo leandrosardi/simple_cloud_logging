@@ -1,5 +1,9 @@
 require_relative '../lib/simple_cloud_logging'
 
+BlackStack::Logger.set(
+    nesting_assertion: true,
+)
+
 # create a logger
 l = BlackStack::LocalLogger.new("assertion.log")
 

@@ -1,18 +1,27 @@
 module BlackStack
 
   module Logger
-    @@min_size = 10*1024*1024 
-    @@max_size = 20*1024*1024
-    @@show_nesting_level = false
-    @@show_nesting_caller = false
-    @@colorize = true
+    DEFAULT_MIN_SIZE = 10*1024*1024
+    DEFAULT_MAX_SIZE = 20*1024*1024
+    DEFAULT_SHOW_NESTING_LEVEL = false
+    DEFAULT_SHOW_NESTING_CALLER = false
+    DEFAULT_COLORIZE = true
+    DEFAULT_NESTING_ASSERTION = false
+
+    @@min_size = DEFAULT_MIN_SIZE
+    @@max_size = DEFAULT_MAX_SIZE
+    @@show_nesting_level = DEFAULT_SHOW_NESTING_LEVEL
+    @@show_nesting_caller = DEFAULT_SHOW_NESTING_CALLER
+    @@colorize = DEFAULT_COLORIZE
+    @@nesting_assertion = DEFAULT_NESTING_ASSERTION
 
     def self.set(
-      min_size: 10*1024*1024,
-      max_size: 20*1024*1024,
-      show_nesting_level: false,
-      show_nesting_caller: false,
-      colorize: true
+      min_size: DEFAULT_MIN_SIZE,
+      max_size: DEFAULT_MAX_SIZE,
+      show_nesting_level: DEFAULT_SHOW_NESTING_LEVEL,
+      show_nesting_caller: DEFAULT_SHOW_NESTING_CALLER,
+      colorize: DEFAULT_COLORIZE,
+      nesting_assertion: DEFAULT_NESTING_ASSERTION
     )
       err = []
 
@@ -23,12 +32,14 @@ module BlackStack
       err << "show_nesting_level must be a boolean." if ![true, false].include?(show_nesting_level)
       err << "show_nesting_caller must be a boolean." if ![true, false].include?(show_nesting_caller)
       err << "colorize must be a boolean." if ![true, false].include?(colorize)
+      err << "nesting_assertion must be a boolean." if ![true, false].include?(nesting_assertion)
 
       @@min_size = min_size
       @@max_size = max_size
       @@show_nesting_level = show_nesting_level
       @@show_nesting_caller = show_nesting_caller
       @@colorize = colorize  
+      @@nesting_assertion = nesting_assertion
 
       if !colorize
         # overwrite the instance methods green, red, blue and yellow of the class String from inside the constructor of another class, to make them non-effect.
@@ -70,6 +81,10 @@ module BlackStack
 
     def self.colorize()
       @@colorize
+    end
+
+    def self.nesting_assertion()
+      @@nesting_assertion
     end
   end # module Logger
 
@@ -131,7 +146,9 @@ module BlackStack
 #binding.pry if s == '4... '
       # if the parent level was called from the same line, I am missing to close the parent.
       if self.level_open_callers[self.level-1].to_s == caller.to_s
-        raise LogNestingError.new("Log nesting assertion: You missed to close the log-level that you opened at #{caller.to_s}.")
+        if Logger.nesting_assertion
+          raise LogNestingError.new("Log nesting assertion: You missed to close the log-level that you opened at #{caller.to_s}.")
+        end
       else
         self.level_open_callers[self.level] = caller.to_s
       end
@@ -197,7 +214,9 @@ module BlackStack
         # force the level to 2, so I can use the loger to trace the error after raising the exceptiopn.
         self.level = 1
         # raise the exception
-        raise LogNestingError.new("Log nesting assertion: You are closing 2 times the level started, or you missed to open that lavel, or you closed the another level in the middle 2 times.") 
+        if Logger.nesting_assertion
+          raise LogNestingError.new("Log nesting assertion: You are closing 2 times the level started, or you missed to open that lavel, or you closed the another level in the middle 2 times.") 
+        end
       end
 
       self.level -= 1
