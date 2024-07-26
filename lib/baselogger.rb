@@ -6,6 +6,9 @@ module BlackStack
     def initialize(message)
       @message = message
     end
+    def to_s
+      @message
+    end
   end
 
 
@@ -54,13 +57,13 @@ module BlackStack
 #binding.pry if s == '4... '
       # if the parent level was called from the same line, I am missing to close the parent.
       if self.level_callers[self.level-1].to_s == caller.to_s
-        raise LogNestingError.new("Log nesting assertion: Log level at #{caller} not closed.")
+        raise LogNestingError.new("Log nesting assertion: Log level at #{caller.to_s} not closed.")
       else
         self.level_callers[self.level] = caller.to_s
       end
 
       t = !datetime.nil? ? datetime : Time.now 
-      ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level} - caller: #{caller})").to_s.blue
+      ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level} - caller: #{caller.to_s})").to_s.blue
 #binding.pry if self.level>0
       # start in a new line, if this line is the first child of the parent level has opened lines
       ltext = ""
@@ -112,8 +115,13 @@ module BlackStack
       # since I am closing a level, set the number of children to 0
       self.level_children_lines[self.level] = 0
 
-      raise LogNestingError.new("Log nesting assertion: Log level went to negative.") if self.level == 0
-
+      if self.level == 0
+        # force the level to 1, so I can use the loger to trace the error after raising the exceptiopn.
+        self.level = 1
+        # raise the exception
+        raise LogNestingError.new("Log nesting assertion: Log level went to negative.") 
+      end
+      
       self.level -= 1
       ltext += s + NEWLINE 
             
