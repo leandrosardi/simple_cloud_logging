@@ -1,8 +1,8 @@
 require_relative '../lib/simple_cloud_logging'
 
-BlackStack::LoggerSetup.set(
-    min_size: 6*1024, # 6K bytes
-    max_size: 10*1024, # 10k bytes
+BlackStack::Logger.set(
+    min_size: 6*1024, # 6KB bytes
+    max_size: 10*1024, # 10KB bytes
     show_nesting_level: true,
     show_nesting_caller: true,
     colorize: true

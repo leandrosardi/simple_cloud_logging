@@ -1,17 +1,17 @@
 module BlackStack
 
-  module LoggerSetup
-    @@min_size = 10*1024*1024*1024
-    @@max_size = 20*1024*1024*1024
-    @@show_nesting_level = true
-    @@show_nesting_caller = true
+  module Logger
+    @@min_size = 10*1024*1024 
+    @@max_size = 20*1024*1024
+    @@show_nesting_level = false
+    @@show_nesting_caller = false
     @@colorize = true
 
     def self.set(
-      min_size: 10*1024*1024*1024,
-      max_size: 20*1024*1024*1024,
-      show_nesting_level: true,
-      show_nesting_caller: true,
+      min_size: 10*1024*1024,
+      max_size: 20*1024*1024,
+      show_nesting_level: false,
+      show_nesting_caller: false,
       colorize: true
     )
       err = []
@@ -84,7 +84,8 @@ module BlackStack
     
     def log(s, datetime=nil)
       t = !datetime.nil? ? datetime : Time.now 
-      ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level})").to_s.blue
+      ltime = t.strftime("%Y-%m-%d %H:%M:%S").to_s
+      ltime += " - level #{self.level.to_s.blue}" if Logger.show_nesting_level
       ltext = ltime + ": " + s + NEWLINE
       # print
       print ltext
@@ -115,7 +116,10 @@ module BlackStack
       end
 
       t = !datetime.nil? ? datetime : Time.now 
-      ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level} - caller: #{caller.to_s})").to_s.blue
+      ltime = t.strftime("%Y-%m-%d %H:%M:%S").to_s
+      ltime += " - level #{self.level.to_s.blue}" if Logger.show_nesting_level
+      ltime += " - caller #{caller.to_s.blue}" if Logger.show_nesting_caller
+
 #binding.pry if self.level>0
       # start in a new line, if this line is the first child of the parent level has opened lines
       ltext = ""
@@ -151,8 +155,9 @@ module BlackStack
       # if the parent level has children
       if self.level_children_lines[self.level].to_i > 0
         t = !datetime.nil? ? datetime : Time.now 
-        ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level-1})").to_s.blue
-
+        ltime = t.strftime("%Y-%m-%d %H:%M:%S").to_s
+        ltime += " - level #{self.level.to_s.blue}" if Logger.show_nesting_level
+  
         ltext += "#{ltime}: "
 
         i=1

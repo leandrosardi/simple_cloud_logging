@@ -15,9 +15,9 @@ module BlackStack
     # finally, add the text into the variable s at the end of the file.
     def write(s)
       # store the min allowed bytes in the variable min
-      min = LoggerSetup.min_size
+      min = Logger.min_size
       # store the max allowed bytes in the variable max
-      max = LoggerSetup.max_size
+      max = Logger.max_size
       # get number of bytes of filename and store it the variable n
       n = File.exists?(self.filename) ? File.size(self.filename) : 0
       # if number of bytes (n) is higer than max, then truncate the first (max-min) bytes in the file.
