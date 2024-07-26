@@ -60,9 +60,9 @@ module BlackStack
 
     def logf(s, datetime=nil)
       ltext = ""
-
+#binding.pry if  self.level_children_lines[self.level].to_i > 0
       # if the parent level has children
-      if self.level_children_lines[self.level-1].to_i > 0
+      if self.level_children_lines[self.level].to_i > 0
         t = !datetime.nil? ? datetime : Time.now 
         ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level-1})").to_s.blue
 
@@ -80,7 +80,7 @@ module BlackStack
       self.level_children_lines[self.level] = 0
 
       self.level -= 1
-      ltext = s + NEWLINE 
+      ltext += s + NEWLINE 
       print ltext
       ltext
     end
