@@ -14,13 +14,14 @@ module BlackStack
 
   class BaseLogger
     NEWLINE = "\n\r"
-    attr_accessor :filename, :level, :level_children_lines, :level_callers
+    attr_accessor :filename, :level, :level_children_lines, :level_open_callers #, :level_close_callers
 
     def initialize_attributes()
       self.level = 0
       self.level_children_lines = {}      
-      self.level_callers = {}
-    end
+      self.level_open_callers = {}
+      #self.level_close_callers = {}
+  end
     
     def initialize(the_filename=nil)
       self.filename = the_filename
@@ -52,15 +53,19 @@ module BlackStack
       # - Referneces:
       #   - https://stackoverflow.com/questions/37564928/how-to-find-out-from-which-line-number-the-method-was-called-in-ruby
       #   - https://ruby-doc.org/core-2.2.3/Thread/Backtrace/Location.html
-      caller = caller_locations(0..2).last
+#binding.pry if s == "Looking for number 3... "
+      caller = caller_locations(0..).last
 #binding.pry if s == '1... '
 #binding.pry if s == '4... '
       # if the parent level was called from the same line, I am missing to close the parent.
-      if self.level_callers[self.level-1].to_s == caller.to_s
+      if self.level_open_callers[self.level-1].to_s == caller.to_s
         raise LogNestingError.new("Log nesting assertion: You missed to close the log-level that you opened at #{caller.to_s}.")
       else
-        self.level_callers[self.level] = caller.to_s
+        self.level_open_callers[self.level] = caller.to_s
       end
+
+      # clean the caller who closed the level that I am opening
+      #self.level_close_callers[self.level+1] = nil
 
       t = !datetime.nil? ? datetime : Time.now 
       ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level} - caller: #{caller.to_s})").to_s.blue
@@ -92,11 +97,20 @@ module BlackStack
 
     def logf(s, datetime=nil)
       ltext = ""
-#binding.pry if  self.level_children_lines[self.level].to_i > 0
+=begin
+      caller = caller_locations(0..).last
 
-      # clean the caller of the level that I am closing
-      self.level_callers[self.level-1] = nil
-
+      # if the level was closed from the same line, I am closing it 2 times
+      if self.level_close_callers[self.level+1].to_s == caller.to_s
+        self.level = 1
+        raise LogNestingError.new("Log nesting assertion: You are closing the same level for a second time at #{caller.to_s}.")
+      else
+        self.level_close_callers[self.level] = caller.to_s
+      end
+=end
+      # clear the caller who opened the level that I am closing
+      self.level_open_callers[self.level-1] = nil
+      
       # if the parent level has children
       if self.level_children_lines[self.level].to_i > 0
         t = !datetime.nil? ? datetime : Time.now 
@@ -120,7 +134,7 @@ module BlackStack
         # force the level to 2, so I can use the loger to trace the error after raising the exceptiopn.
         self.level = 1
         # raise the exception
-        raise LogNestingError.new("Log nesting assertion: You are closing the same level 2 times, or you missed to open that lavel.") 
+        raise LogNestingError.new("Log nesting assertion: You are closing 2 times the level started, or you missed to open that lavel, or you closed the another level in the middle 2 times.") 
       end
 
       self.level -= 1
