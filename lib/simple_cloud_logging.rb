@@ -1,4 +1,4 @@
-require 'pry'
+#require 'pry'
 require 'colorize'
 require 'blackstack-core'
 require_relative './baselogger'

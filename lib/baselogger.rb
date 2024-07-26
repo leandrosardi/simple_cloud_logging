@@ -29,6 +29,27 @@ module BlackStack
       @@show_nesting_level = show_nesting_level
       @@show_nesting_caller = show_nesting_caller
       @@colorize = colorize  
+
+      if !colorize
+        # overwrite the instance methods green, red, blue and yellow of the class String from inside the constructor of another class, to make them non-effect.
+        String.class_eval do
+          define_method(:green) do
+            self
+          end
+    
+          define_method(:red) do
+            self
+          end
+    
+          define_method(:blue) do
+            self
+          end
+    
+          define_method(:yellow) do
+            self
+          end
+        end
+      end
     end
 
     def self.min_size()
