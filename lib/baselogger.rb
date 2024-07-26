@@ -14,13 +14,12 @@ module BlackStack
 
   class BaseLogger
     NEWLINE = "\n\r"
-    attr_accessor :filename, :level, :level_children_lines, :level_open_callers #, :level_close_callers
+    attr_accessor :filename, :level, :level_children_lines, :level_open_callers
 
     def initialize_attributes()
       self.level = 0
       self.level_children_lines = {}      
       self.level_open_callers = {}
-      #self.level_close_callers = {}
   end
     
     def initialize(the_filename=nil)
@@ -64,9 +63,6 @@ module BlackStack
         self.level_open_callers[self.level] = caller.to_s
       end
 
-      # clean the caller who closed the level that I am opening
-      #self.level_close_callers[self.level+1] = nil
-
       t = !datetime.nil? ? datetime : Time.now 
       ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level} - caller: #{caller.to_s})").to_s.blue
 #binding.pry if self.level>0
@@ -97,17 +93,7 @@ module BlackStack
 
     def logf(s, datetime=nil)
       ltext = ""
-=begin
-      caller = caller_locations(0..).last
 
-      # if the level was closed from the same line, I am closing it 2 times
-      if self.level_close_callers[self.level+1].to_s == caller.to_s
-        self.level = 1
-        raise LogNestingError.new("Log nesting assertion: You are closing the same level for a second time at #{caller.to_s}.")
-      else
-        self.level_close_callers[self.level] = caller.to_s
-      end
-=end
       # clear the caller who opened the level that I am closing
       self.level_open_callers[self.level-1] = nil
       
