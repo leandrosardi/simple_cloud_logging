@@ -490,7 +490,7 @@ end # class FooClass
 
 ## 18. Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the last [ruby gem](https://rubygems.org/gems/simple_command_line_parser). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the last [ruby gem](https://rubygems.org/gems/simple_cloud_logging). 
 
 ## 19. Authors
 
