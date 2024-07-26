@@ -1,3 +1,5 @@
+![Gem version](https://img.shields.io/gem/v/simple_cloud_logging) ![Gem downloads](https://img.shields.io/gem/dt/simple_cloud_logging)
+
 # Simple Cloud Logging
 
 **Simple** and **Colorful** logging library for Ruby, with the following features:
