@@ -141,10 +141,16 @@ module BlackStack
       #   - https://stackoverflow.com/questions/37564928/how-to-find-out-from-which-line-number-the-method-was-called-in-ruby
       #   - https://ruby-doc.org/core-2.2.3/Thread/Backtrace/Location.html
 #binding.pry if s == "Looking for number 3... "
-      caller = caller_locations(0..).last
-#binding.pry if s == '1... '
-#binding.pry if s == '4... '
-#binding.pry if s == "Checking... "
+      
+      # Get the file and line from where this method logs was called
+      # - References: 
+      #   - https://github.com/leandrosardi/simple_cloud_logging/issues/6
+      #
+      callers = caller_locations(0..).to_a
+      prev_caller = callers.select { |c| c.to_s.include?('locallogger.rb') }.last
+      prev_index = callers.index(prev_caller)
+      caller = callers[prev_index+1].to_s
+
       # if the parent level was called from the same line, I am missing to close the parent.
       if self.level_open_callers[self.level-1].to_s == caller.to_s
         if Logger.nesting_assertion
