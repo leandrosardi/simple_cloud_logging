@@ -18,6 +18,5 @@ begin
     end
     l.done
 rescue => e
-#binding.pry
     l.error(e)
 end

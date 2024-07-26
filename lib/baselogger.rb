@@ -57,7 +57,7 @@ module BlackStack
 #binding.pry if s == '4... '
       # if the parent level was called from the same line, I am missing to close the parent.
       if self.level_callers[self.level-1].to_s == caller.to_s
-        raise LogNestingError.new("Log nesting assertion: Log level at #{caller.to_s} not closed.")
+        raise LogNestingError.new("Log nesting assertion: You missed to close the log-level that you opened at #{caller.to_s}.")
       else
         self.level_callers[self.level] = caller.to_s
       end
@@ -115,13 +115,14 @@ module BlackStack
       # since I am closing a level, set the number of children to 0
       self.level_children_lines[self.level] = 0
 
-      if self.level == 0
-        # force the level to 1, so I can use the loger to trace the error after raising the exceptiopn.
+      # nesting assertion
+      if self.level <= 0
+        # force the level to 2, so I can use the loger to trace the error after raising the exceptiopn.
         self.level = 1
         # raise the exception
-        raise LogNestingError.new("Log nesting assertion: Log level went to negative.") 
+        raise LogNestingError.new("Log nesting assertion: You are closing the same level 2 times, or you missed to open that lavel.") 
       end
-      
+
       self.level -= 1
       ltext += s + NEWLINE 
             
