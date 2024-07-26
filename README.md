@@ -362,15 +362,85 @@ error: Log nesting assertion: You are closing 2 times the level started, or you 
 assertion4.rb:24:in `<main>'.
 ```
 
-----------------------------------------------------------------------
+## 12. Size Control
 
-## 5. Dummy Logging
+```ruby
+BlackStack::Logger.set(
+    min_size: 6*1024, # 6KB bytes
+    max_size: 10*1024 # 10KB bytes
+)
+```
+
+Each time the logfile grows over `max_size` bytes, it will be dropbed to `min_size` bytes.
+
+The dropping is made by dropping the head lines. The tail is preserved.
+
+## 13. Disabling Colorization
+
+```ruby
+BlackStack::Logger.set(
+    colorize: false,
+)
+```
+
+Disabling colorization gets **simple_cloud_logging** overwritting the instance methods `green`, `red`, `blue` and `yellow` of the class `String` to make them non-effect.
+
+If you require the `colorize` gem after the logger setup, colors will be activated again.
+
+## 14. Showing Nesting Level
+
+If you are working with nested logs, you can show the nesting level of the current line.
+
+This feature is useful if you want to visualize where you open and close each loggin line.
+
+```ruby
+BlackStack::Logger.set(
+    show_nesting_level: true,
+)
+```
+
+```
+2024-07-26 16:07:43 - level 0: 
+2024-07-26 16:07:43 - level 0: Looking for number 3... 
+2024-07-26 16:07:43 - level 1: > 0... no
+2024-07-26 16:07:43 - level 1: > 1... no
+2024-07-26 16:07:43 - level 1: > 2... no
+2024-07-26 16:07:43 - level 1: > 3... yes
+2024-07-26 16:07:43 - level 1: > 4... no
+2024-07-26 16:07:43 - level 1: > 5... no
+2024-07-26 16:07:43 - level 1: done
+```
+
+## 15. Showing Callers
+
+You can show from which like in your souce code you opened each log line.
+
+This feature is useful if you want to visualize and fix nesting errors.
+
+```ruby
+BlackStack::Logger.set(
+    show_nesting_caller: true,
+)
+```
+
+```
+2024-07-26 16:10:59 - caller show_caller.rb:12:in `<main>': Looking for number 3... 
+2024-07-26 16:10:59 - caller show_caller.rb:15:in `<main>': > 0... no
+2024-07-26 16:10:59 - caller show_caller.rb:15:in `<main>': > 1... no
+2024-07-26 16:10:59 - caller show_caller.rb:15:in `<main>': > 2... no
+2024-07-26 16:10:59 - caller show_caller.rb:15:in `<main>': > 3... yes
+2024-07-26 16:10:59 - caller show_caller.rb:15:in `<main>': > 4... no
+2024-07-26 16:10:59 - caller show_caller.rb:15:in `<main>': > 5... no
+2024-07-26 16:10:59: done
+```
+
+## 16. Dummy Loggers
 
 The methods of the `DummyLogger` class just do nothing.
 
 You can choose between `LocalLogger` or `DummyLogger` depending if you want to write log or not, dynamically.
 
-`DummyLogger` is used to pass or not a logger to a function, for deep-nested logging.
+`DummyLogger` is useful to pass or not a logger to a function, for deep-nested logging.
 
 **Example:** 
 
@@ -403,6 +473,3 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Further Work
-
-1. HTML/Javascript widget to connect any server via SSH and pull the log lines to a web dashboard. 
