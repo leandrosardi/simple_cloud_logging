@@ -147,6 +147,221 @@ while i < 6
 end
 ```
 
+## 9. Custom Line Closing
+
+As you can read above, you can start a log line with the `logs` method, and you can close it with any of the methopds `done`, `error`, `yes`, `no`, `ok` and `skip`.
+
+Each method is printed with its own color:
+
+- `done`: green.
+- `error`: red.
+- `yes`: green.
+- `no`: yellow.
+- `ok`: green.
+- `skip`: yellow.
+
+## 10. Custom Line Closing
+
+If you need to close a line with a specitic text, you can use the `logf` method.
+
+You can also add color to your custom text.
+
+```ruby
+i = 0
+while i < 6
+    l.logs "#{i}... "
+    if i % 2 == 0
+        l.ok
+    else
+        l.logf("rejected".blue)
+    end
+    i += 1
+end
+```
+
+## 11. Nesting Lines
+
+```ruby
+l.logs "Skipping odd numbers... "
+i = 0
+while i < 6
+    l.logs "#{i}... "
+    if i % 2 == 0
+        l.ok
+    else
+        l.skip(details: 'it is an odd number')
+    end
+    i += 1
+end
+l.done
+```
+
+```
+2024-07-26 15:27:04: Skipping odd numbers... 
+2024-07-26 15:27:04: > 0... ok
+2024-07-26 15:27:04: > 1... skip (it is an odd number)
+2024-07-26 15:27:04: > 2... ok
+2024-07-26 15:27:04: > 3... skip (it is an odd number)
+2024-07-26 15:27:04: > 4... ok
+2024-07-26 15:27:04: > 5... skip (it is an odd number)
+2024-07-26 15:27:04: done
+```
+
+## 12. Nesting Assertions
+
+You can setup **simple_cloud_loggin** to check if you are nesting your log correctly.
+
+```ruby
+BlackStack::Logger.set(
+    nesting_assertion: true,
+)
+```
+
+Below I wrote 4 diffent examples of wrong nestung usage, and the output of each one.
+
+**Example 1:**
+
+```ruby
+begin
+    l.blank_line
+    l.logs "Looking for number 3... "
+    i = 0
+    while i < 6
+        l.logs "#{i}... "
+        if i == 3
+            #l.yes # --> I missed to close the log line !
+        else
+            l.no
+        end
+        i += 1
+    end
+    l.done
+rescue => e
+    l.error(e)
+end
+```
+
+```
+2024-07-26 15:58:43: 
+2024-07-26 15:58:43: Looking for number 3... 
+2024-07-26 15:58:43: > 0... no
+2024-07-26 15:58:43: > 1... no
+2024-07-26 15:58:43: > 2... no
+2024-07-26 15:58:43: > 3... error: Log nesting assertion: You missed to close the log-level that you opened at assertion1.rb:15:in `<main>'.
+/home/leandro/code/simple_cloud_logging/lib/baselogger.rb:150:in `logs'
+/home/leandro/code/simple_cloud_logging/lib/locallogger.rb:46:in `logs'
+assertion1.rb:15:in `<main>'.
+```
+
+**Example 2:**
+
+```ruby
+begin
+    l.blank_line
+    l.logs "Looking for number 3... "
+    i = 0
+    while i < 6
+        #l.logs "#{i}... " # --> I missed to open the log.
+        if i == 3
+            l.yes 
+        else
+            l.no 
+        end
+        i += 1
+    end
+    l.done
+rescue => e
+    l.error(e)
+end
+```
+
+```
+2024-07-26 15:59:44: 
+2024-07-26 15:59:44: Looking for number 3... no
+error: Log nesting assertion: You are closing 2 times the level started, or you missed to open that lavel, or you closed the another level in the middle 2 times.
+/home/leandro/code/simple_cloud_logging/lib/baselogger.rb:218:in `logf'
+/home/leandro/code/simple_cloud_logging/lib/locallogger.rb:53:in `logf'
+/home/leandro/code/simple_cloud_logging/lib/baselogger.rb:261:in `no'
+assertion2.rb:19:in `<main>'.
+```
+
+**Example 3:**
+
+```ruby
+begin
+    l.blank_line
+    #l.logs "Looking for number 3... " # --> I missed to open the log.
+    i = 0
+    while i < 6
+        l.logs "#{i}... " 
+        if i == 3
+            l.yes 
+        else
+            l.no 
+        end
+        i += 1
+    end
+    l.done
+rescue => e
+    l.error(e)
+end
+```
+
+```
+2024-07-26 16:00:41: 
+2024-07-26 16:00:41: 0... no
+2024-07-26 16:00:41: 1... no
+2024-07-26 16:00:41: 2... no
+2024-07-26 16:00:41: 3... yes
+2024-07-26 16:00:41: 4... no
+2024-07-26 16:00:41: 5... no
+error: Log nesting assertion: You are closing 2 times the level started, or you missed to open that lavel, or you closed the another level in the middle 2 times.
+/home/leandro/code/simple_cloud_logging/lib/baselogger.rb:218:in `logf'
+/home/leandro/code/simple_cloud_logging/lib/locallogger.rb:53:in `logf'
+/home/leandro/code/simple_cloud_logging/lib/baselogger.rb:233:in `done'
+assertion3.rb:23:in `<main>'.
+```
+
+**Example 4:**
+
+```ruby
+begin
+    l.blank_line
+    l.logs "Looking for number 3... "
+    i = 0
+    while i < 6
+        l.logs "#{i}... " 
+        if i == 3
+            l.yes 
+            l.no # --> I closed the same level 2 times by mistake
+        else
+            l.no 
+        end
+        i += 1
+    end
+    l.done
+rescue => e
+    l.error(e)
+end
+```
+
+```
+2024-07-26 16:01:23: 
+2024-07-26 16:01:23: Looking for number 3... 
+2024-07-26 16:01:23: > 0... no
+2024-07-26 16:01:23: > 1... no
+2024-07-26 16:01:23: > 2... no
+2024-07-26 16:01:23: > 3... yes
+2024-07-26 16:01:23: no
+2024-07-26 16:01:23: 4... no
+2024-07-26 16:01:23: 5... no
+error: Log nesting assertion: You are closing 2 times the level started, or you missed to open that lavel, or you closed the another level in the middle 2 times.
+/home/leandro/code/simple_cloud_logging/lib/baselogger.rb:218:in `logf'
+/home/leandro/code/simple_cloud_logging/lib/locallogger.rb:53:in `logf'
+/home/leandro/code/simple_cloud_logging/lib/baselogger.rb:233:in `done'
+assertion4.rb:24:in `<main>'.
+```
+
 ----------------------------------------------------------------------
 
 ## 5. Dummy Logging
