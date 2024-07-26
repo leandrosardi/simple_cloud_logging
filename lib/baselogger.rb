@@ -1,5 +1,57 @@
 module BlackStack
 
+  module LoggerSetup
+    @@min_size = 10*1024*1024*1024
+    @@max_size = 20*1024*1024*1024
+    @@show_nesting_level = true
+    @@show_nesting_caller = true
+    @@colorize = true
+
+    def self.set(
+      min_size: 10*1024*1024*1024,
+      max_size: 20*1024*1024*1024,
+      show_nesting_level: true,
+      show_nesting_caller: true,
+      colorize: true
+    )
+      err = []
+
+      # min_size must be a positive integer
+      err << "min_byes must be apositive integer." if !min_size.is_a?(Integer) || min_size.to_i < 0
+      err << "max_byes must be apositive integer." if !max_size.is_a?(Integer) || max_size.to_i < 0
+      err << "min_byes must be lower than max_size." if min_size.is_a?(Integer) && max_size.is_a?(Integer) && !(min_size < max_size)
+      err << "show_nesting_level must be a boolean." if ![true, false].include?(show_nesting_level)
+      err << "show_nesting_caller must be a boolean." if ![true, false].include?(show_nesting_caller)
+      err << "colorize must be a boolean." if ![true, false].include?(colorize)
+
+      @@min_size = min_size
+      @@max_size = max_size
+      @@show_nesting_level = show_nesting_level
+      @@show_nesting_caller = show_nesting_caller
+      @@colorize = colorize  
+    end
+
+    def self.min_size()
+      @@min_size
+    end
+
+    def self.max_size()
+      @@max_size
+    end
+
+    def self.show_nesting_level()
+      @@show_nesting_level
+    end
+
+    def self.show_nesting_caller()
+      @@show_nesting_caller
+    end
+
+    def self.colorize()
+      @@colorize
+    end
+  end # module Logger
+
   class LogNestingError < StandardError
     attr_reader :message
 
@@ -10,7 +62,6 @@ module BlackStack
       @message
     end
   end
-
 
   class BaseLogger
     NEWLINE = "\n\r"
