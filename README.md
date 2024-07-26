@@ -1,13 +1,38 @@
 # Simple Cloud Logging
 
-Simple and Colorful log library for Ruby.
+**Simple** and **Colorful** logging library for Ruby, with the following features:
 
-(screenshot here)
+- :heavy_check_mark: Colorization,
+- :heavy_check_mark: Log Size Control,
+- :heavy_check_mark: Nesting Debug Information,
+- :heavy_check_mark: Nesting Assertions; and
+- :heavy_check_mark: Dummy Logger Facade.
+
+
+![screenshots](./examples/screenshots.png)
 
 **Outline**
 
 1. [Installation](#1-installation)
 2. [Getting Started](#2-getting-started)
+3. [Closing Lines with Details](#3-closing-lines-with-details)
+4. [Starting and Closing in One Line](#4-starting-and-closing-in-one-line)
+5. [Writing Blank Lines](#5-writing-blank-lines)
+6. [Writing Errors](#6-writing-errors)
+7. [Abbreviations](#7-abbreviations)
+8. [Skipping With Details](#8-skipping-with-details)
+9. [Custom Line Closing](#9-custom-line-closing)
+10. [Custom Line Closing](#10-custom-line-closing)
+11. [Nesting Lines](#11-nesting-lines)
+12. [Nesting Assertions](#12-nesting-assertions)
+13. [Size Control](#13-size-control)
+14. [Disabling Colorization](#14-disabling-colorization)
+15. [Showing Nesting Level](#15-showing-nesting-level)
+16. [Showing Callers](#16-showing-callers)
+17. [Dummy Loggers](#17-dummy-loggers)
+18. [Versioning](#18-versioning)
+19. [Authors](#19-authors)
+20. [License](#20-license)
 
 ## 1. Installation
 
@@ -362,7 +387,7 @@ error: Log nesting assertion: You are closing 2 times the level started, or you 
 assertion4.rb:24:in `<main>'.
 ```
 
-## 12. Size Control
+## 13. Size Control
 
 ```ruby
 BlackStack::Logger.set(
@@ -375,7 +400,7 @@ Each time the logfile grows over `max_size` bytes, it will be dropbed to `min_si
 
 The dropping is made by dropping the head lines. The tail is preserved.
 
-## 13. Disabling Colorization
+## 14. Disabling Colorization
 
 ```ruby
 BlackStack::Logger.set(
@@ -387,7 +412,7 @@ Disabling colorization gets **simple_cloud_logging** overwritting the instance m
 
 If you require the `colorize` gem after the logger setup, colors will be activated again.
 
-## 14. Showing Nesting Level
+## 15. Showing Nesting Level
 
 If you are working with nested logs, you can show the nesting level of the current line.
 
@@ -411,7 +436,7 @@ BlackStack::Logger.set(
 2024-07-26 16:07:43 - level 1: done
 ```
 
-## 15. Showing Callers
+## 16. Showing Callers
 
 You can show from which like in your souce code you opened each log line.
 
@@ -434,7 +459,7 @@ BlackStack::Logger.set(
 2024-07-26 16:10:59: done
 ```
 
-## 16. Dummy Loggers
+## 17. Dummy Loggers
 
 The methods of the `DummyLogger` class just do nothing.
 
@@ -461,15 +486,15 @@ class FooClass
 end # class FooClass
 ```
 
-## Versioning
+## 18. Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the last [ruby gem](https://rubygems.org/gems/simple_command_line_parser). 
 
-## Authors
+## 19. Authors
 
 * **Leandro Daniel Sardi** - *Initial work* - [LeandroSardi](https://github.com/leandrosardi)
 
-## License
+## 20. License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
