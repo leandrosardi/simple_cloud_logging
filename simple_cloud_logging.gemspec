@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'simple_cloud_logging'
-  s.version     = '1.2.5'
+  s.version     = '1.2.6'
   s.date        = '2024-07-26'
   s.summary     = "THIS GEM IS STILL IN DEVELOPMENT STAGE. Easy library to write log files in the cloud, watch them anywhere, and enbed the log in any website. The remote-logging feature is still being written."
   s.description = "THIS GEM IS STILL IN DEVELOPMENT STAGE. Find documentation here: https://github.com/leandrosardi/simple_cloud_logging."
