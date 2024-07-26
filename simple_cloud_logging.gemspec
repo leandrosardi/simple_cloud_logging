@@ -11,11 +11,6 @@ Gem::Specification.new do |s|
     "lib/baselogger.rb",
     "lib/dummylogger.rb",
     "lib/locallogger.rb",
-    "lib/remotelogger.rb",
-    "examples/example01.rb",
-    "examples/example02.rb",
-    "examples/example03.rb",
-    "examples/example04.rb",
   ]
   s.homepage    = 'https://rubygems.org/gems/simple_cloud_logging'
   s.license     = 'MIT'
