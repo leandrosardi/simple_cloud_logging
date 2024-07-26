@@ -1,15 +1,11 @@
 module BlackStack
   class BaseLogger
-    METHOD_LOG = 'log'
-    METHOD_LOGS = 'logs'
-    METHOD_LOGF = 'logf'  
-    METHODS = [METHOD_LOG, METHOD_LOGS, METHOD_LOGF]
-
-    attr_accessor :filename, :level, :level_opened_lines
+    NEWLINE = "\n\r"
+    attr_accessor :filename, :level, :level_children_lines
 
     def initialize_attributes()
       self.level = 0
-      self.level_opened_lines = {}      
+      self.level_children_lines = {}      
     end
     
     def initialize(the_filename=nil)
@@ -23,8 +19,8 @@ module BlackStack
     
     def log(s, datetime=nil)
       t = !datetime.nil? ? datetime : Time.now 
-      ltime = t.strftime("%Y-%m-%d %H:%M:%S").to_s
-      ltext = ltime + ": " + s + "\n\r"
+      ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level})").to_s.blue
+      ltext = ltime + ": " + s + NEWLINE
       print ltext
       ltext
     end
@@ -35,18 +31,21 @@ module BlackStack
 
     def logs(s, datetime=nil)
       t = !datetime.nil? ? datetime : Time.now 
-      ltime = t.strftime("%Y-%m-%d %H:%M:%S").to_s
-
+      ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level})").to_s.blue
+#binding.pry if self.level>0
+      # start in a new line, if this line is the first child of the parent level has opened lines
       ltext = ""
-      self.level += 1
-      self.level_opened_lines[self.level] = 0
-      
-      ltext += "\n"
+      ltext += NEWLINE if self.level > 0 && self.level_children_lines[self.level].to_i == 0
       ltext += ltime + ": "
+
+      # increase the number of children of the parent level
+      self.level_children_lines[self.level] = self.level_children_lines[self.level].to_i + 1
+
+      self.level += 1
 
       i=1
       while (i<self.level)
-        ltext += ">"
+        ltext += "> "
         i+=1
       end
     
@@ -60,28 +59,29 @@ module BlackStack
     end
 
     def logf(s, datetime=nil)
-      t = !datetime.nil? ? datetime : Time.now 
-      ltime = t.strftime("%Y-%m-%d %H:%M:%S").to_s
+      ltext = ""
 
-      ltext = ''
-      
-      if self.level_opened_lines[self.level] > 0
-        ltext = ltime + ": "
-        
+      # if the parent level has children
+      if self.level_children_lines[self.level-1].to_i > 0
+        t = !datetime.nil? ? datetime : Time.now 
+        ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level-1})").to_s.blue
+
+        ltext += "#{ltime}: "
+
         i=1
         while (i<self.level)
-          ltext += ">"
+          ltext += "> "
           i+=1
         end
-      end # if self.level_opened_lines == 0
-      
-      self.level_opened_lines[self.level] -= 1
+  
+      end
+
+      # since I am closing a level, set the number of children to 0
+      self.level_children_lines[self.level] = 0
+
       self.level -= 1
-
-      ltext += s + "\n"
-
+      ltext = s + NEWLINE 
       print ltext
-      
       ltext
     end
 
