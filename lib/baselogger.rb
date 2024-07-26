@@ -6,7 +6,7 @@ module BlackStack
     DEFAULT_SHOW_NESTING_LEVEL = false
     DEFAULT_SHOW_NESTING_CALLER = false
     DEFAULT_COLORIZE = true
-    DEFAULT_NESTING_ASSERTION = false
+    DEFAULT_NESTING_ASSERTION = true
 
     @@min_size = DEFAULT_MIN_SIZE
     @@max_size = DEFAULT_MAX_SIZE

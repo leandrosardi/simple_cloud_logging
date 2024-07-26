@@ -1,23 +1,13 @@
 # Simple Cloud Logging
 
-Very simple library to write log files. 
+Simple and Colorful log library for Ruby.
 
-I tested this library in the following operative systems:
-
-- Ubuntu 18.4,
-- Ubuntu 20.4,
-- Windows Server 2008,
-- Windows Server 2012.
-
-Email to me if you want to collaborate.
+(screenshot here)
 
 **Outline**
 
 1. [Installation](#1-installation)
 2. [Getting Started](#2-getting-started)
-3. [Nested Logging](#3-nested-logging)
-4. [Persistent Logging](#4-persistent-logging)
-5. [Dummy Logging](#5-dummy-logging)
 
 ## 1. Installation
 
@@ -27,100 +17,137 @@ gem install simple_cloud_logging
 
 ## 2. Getting Started
 
-Create a new file:
-
-```bash
-touch ~/example.rb
-```
+Start an close a log line.
 
 ```ruby
 require 'simple_cloud_logging'
 
-logger = BlackStack::BaseLogger.new(nil)
+l = BlackStack::LocalLogger.new("examples.log")
 
-logger.logs("Get random number... ")
-@n = rand(10)
-logger.done
+l.logs "Calculate 1+1... "
+n = 1 + 1
+l.done
+```
 
-logger.logs("Check if #{@n.to_s}>=5... ")
-if @n>=5
-  logger.yes
-else
-  logger.no
+```
+2024-07-26 15:27:04: Calculate 1+1... done
+```
+
+## 3. Closing Lines with Details
+
+```ruby
+l.logs "Calculate 1+1... "
+n = 1 + 1
+l.done(details: n)
+```
+
+```
+2024-07-26 15:27:04: Calculate 1+1... done (2)
+```
+
+## 4. Starting and Closing in One Line
+
+```ruby
+require 'simple_cloud_logging'
+
+l = BlackStack::LocalLogger.new("examples.log")
+
+l.log "Example 1:"
+l.logs "Calculate 1+1... "
+n = 1 + 1
+l.done
+```
+
+```
+2024-07-26 15:27:04: Example 1:
+2024-07-26 15:27:04: Calculate 1+1... done
+```
+
+## 5. Writing Blank Lines
+
+```ruby
+require 'simple_cloud_logging'
+
+l = BlackStack::LocalLogger.new("examples.log")
+
+l.blank_line
+l.logs "Calculate 1+1... "
+n = 1 + 1
+l.done
+```
+
+```
+2024-07-26 15:27:04: 
+2024-07-26 15:27:04: Calculate 1+1... done
+```
+
+## 6. Writing Errors
+
+```ruby
+l.logs "Calculate 4/0... "
+begin
+    n = 4/0
+    l.done(details: n)
+rescue => e
+    l.error(e)
 end
 ```
 
 ```
-ruby ~/example.rb
+2024-07-26 15:27:04: Calculate 4/0... error: divided by 0
+examples.rb:32:in `/'
+examples.rb:32:in `<main>'.
 ```
 
-```
-20191105204211:Declare variable... done
-20191105204211:Check if 5>5... no
-```
+## 7. Abbreviations
 
-## 3. Nested Logging
+You can close a line with other `yes` or `no`.
 
 ```ruby
-require 'simple_cloud_logging'
-
-logger = BlackStack::BaseLogger.new(nil)
-
-logger.logs("Declare array of array of numbers... ")
-@a = [[1,2,3],[4,5,6],[7,8,9,10]] 
-logger.done
-
-logger.logs("Process array of array elements... ")
-@a.each { |b|
-  logger.logs("Process array of numbers... ")
-  b.each { |n|
-    logger.logs("Check if #{n.to_s}>5... ")
-    if n>5
-      logger.yes
+i = 0
+while i < 6
+    l.logs "Is #{i}==3?... "
+    if i == 3
+        l.yes
     else
-      logger.no
+        l.no
     end
-  }
-  logger.done
-}
-logger.done
+    i += 1
+end
 ```
 
-```
-ruby ~/example.rb
-```
+You can close a line with other `ok` or `skip` too.
 
-```
-20191105204410:Declare array of array of numbers... done
-20191105204410:Process array of array elements...
- > Process array of numbers...
- >  > Check if 1>5... no
- >  > Check if 2>5... no
- >  > Check if 3>5... no
- > done
-
- > Process array of numbers...
- >  > Check if 4>5... no
- >  > Check if 5>5... no
- >  > Check if 6>5... yes
- > done
-
- > Process array of numbers...
- >  > Check if 7>5... yes
- >  > Check if 8>5... yes
- >  > Check if 9>5... yes
- >  > Check if 10>5... yes
- > done
-done
-```
-
-## 4. Persistent Logging
-
-Use the `LocalLogger` class instead `BaseLogger`.
 
 ```ruby
-logger = BlackStack::LocalLogger.new('./example.log')
+i = 0
+while i < 6
+    l.logs "Only even numbers: #{i}... "
+    if i % 2 == 0
+        l.ok
+    else
+        l.skip
+    end
+    i += 1
+end
 ```
+
+## 8. Skipping With Details
+
+```ruby
+i = 0
+while i < 6
+    l.logs "#{i}... "
+    if i % 2 == 0
+        l.ok
+    else
+        l.skip(details: 'it is an odd number')
+    end
+    i += 1
+end
+```
+
+----------------------------------------------------------------------
 
 ## 5. Dummy Logging
 
