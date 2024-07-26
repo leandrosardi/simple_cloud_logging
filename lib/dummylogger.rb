@@ -1,6 +1,5 @@
 module BlackStack
-  require_relative './baselogger'
-  class DummyLogger < BlackStack::BaseLogger
+  class DummyLogger < BaseLogger
 
     # call the parent class to set the attributes
     # call the save method to store the new attributes into the data file

@@ -5,12 +5,11 @@ module BlackStack
     METHOD_LOGF = 'logf'  
     METHODS = [METHOD_LOG, METHOD_LOGS, METHOD_LOGF]
 
-    attr_accessor :filename, :nest_level, :number_of_lines_in_current_level, :current_nest_level
+    attr_accessor :filename, :level, :level_opened_lines
 
     def initialize_attributes()
-      self.nest_level = 0
-      self.current_nest_level = 0
-      self.number_of_lines_in_current_level = 0      
+      self.level = 0
+      self.level_opened_lines = {}      
     end
     
     def initialize(the_filename=nil)
@@ -25,28 +24,29 @@ module BlackStack
     def log(s, datetime=nil)
       t = !datetime.nil? ? datetime : Time.now 
       ltime = t.strftime("%Y-%m-%d %H:%M:%S").to_s
-      ltext = ltime + ": " + s + "\r\n"
+      ltext = ltime + ": " + s + "\n\r"
       print ltext
       ltext
     end
   
+    def blank_line
+      self.log('')
+    end
+
     def logs(s, datetime=nil)
       t = !datetime.nil? ? datetime : Time.now 
       ltime = t.strftime("%Y-%m-%d %H:%M:%S").to_s
 
       ltext = ""
-      self.nest_level += 1
-      self.number_of_lines_in_current_level = 0
+      self.level += 1
+      self.level_opened_lines[self.level] = 0
       
-      if self.current_nest_level != self.nest_level 
-        ltext += "\n"
-      end
-      
+      ltext += "\n"
       ltext += ltime + ": "
 
       i=1
-      while (i<self.nest_level)
-        ltext += " > "
+      while (i<self.level)
+        ltext += ">"
         i+=1
       end
     
@@ -55,9 +55,6 @@ module BlackStack
       #File.open(self.filename, 'a') { |file| file.write(ltext) }
       print ltext
       
-      #
-      self.current_nest_level = self.nest_level
-
       #
       ltext
     end
@@ -68,18 +65,18 @@ module BlackStack
 
       ltext = ''
       
-      if self.number_of_lines_in_current_level > 0
+      if self.level_opened_lines[self.level] > 0
         ltext = ltime + ": "
         
         i=1
-        while (i<self.nest_level)
-          ltext += " > "
+        while (i<self.level)
+          ltext += ">"
           i+=1
         end
-      end # if self.number_of_lines_in_current_level == 0
+      end # if self.level_opened_lines == 0
       
-      self.nest_level -= 1
-      self.number_of_lines_in_current_level += 1
+      self.level_opened_lines[self.level] -= 1
+      self.level -= 1
 
       ltext += s + "\n"
 
@@ -88,25 +85,37 @@ module BlackStack
       ltext
     end
 
-    def release()
-      raise "This is an abstract method."
+    def done(details: nil)
+      if details.nil?
+        self.logf("done".green)
+      else
+        self.logf("done".green + " (#{details.to_s})")
+      end
     end
 
-    def done()
-      self.logf("done")
+    def skip(details: nil)
+      if details.nil?
+        self.logf("skip".yellow)
+      else
+        self.logf("skip".yellow + " (#{details.to_s})")
+      end
     end
 
     def error(e=nil)
-      self.logf("error") if e.nil?
-      self.logf("error: #{e.to_console}.") if !e.nil?
+      self.logf("error".red) if e.nil?
+      self.logf("error: #{e.to_console}.".red) if !e.nil?
     end  
 
     def yes()
-      self.logf("yes")
+      self.logf("yes".green)
+    end
+
+    def ok()
+      self.logf("ok".green)
     end
 
     def no()
-      self.logf("no")
+      self.logf("no".yellow)
     end
   end # class BaseLogger
 end # module BlackStack
