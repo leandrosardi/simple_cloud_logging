@@ -1,11 +1,22 @@
 module BlackStack
+
+  class LogNestingError < StandardError
+    attr_reader :message
+
+    def initialize(message)
+      @message = message
+    end
+  end
+
+
   class BaseLogger
     NEWLINE = "\n\r"
-    attr_accessor :filename, :level, :level_children_lines
+    attr_accessor :filename, :level, :level_children_lines, :level_callers
 
     def initialize_attributes()
       self.level = 0
       self.level_children_lines = {}      
+      self.level_callers = {}
     end
     
     def initialize(the_filename=nil)
@@ -21,7 +32,9 @@ module BlackStack
       t = !datetime.nil? ? datetime : Time.now 
       ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level})").to_s.blue
       ltext = ltime + ": " + s + NEWLINE
+      # print
       print ltext
+      # return
       ltext
     end
   
@@ -30,8 +43,24 @@ module BlackStack
     end
 
     def logs(s, datetime=nil)
+
+      # Nesting assertion:
+      # - How to find out from which line number the method was called in Ruby?
+      # - Referneces:
+      #   - https://stackoverflow.com/questions/37564928/how-to-find-out-from-which-line-number-the-method-was-called-in-ruby
+      #   - https://ruby-doc.org/core-2.2.3/Thread/Backtrace/Location.html
+      caller = caller_locations(0..2).last
+#binding.pry if s == '1... '
+#binding.pry if s == '4... '
+      # if the parent level was called from the same line, I am missing to close the parent.
+      if self.level_callers[self.level-1].to_s == caller.to_s
+        raise LogNestingError.new("Log nesting assertion: Log level at #{caller} not closed.")
+      else
+        self.level_callers[self.level] = caller.to_s
+      end
+
       t = !datetime.nil? ? datetime : Time.now 
-      ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level})").to_s.blue
+      ltime = t.strftime("%Y-%m-%d %H:%M:%S (level #{self.level} - caller: #{caller})").to_s.blue
 #binding.pry if self.level>0
       # start in a new line, if this line is the first child of the parent level has opened lines
       ltext = ""
@@ -51,16 +80,20 @@ module BlackStack
     
       ltext += s
                   
-      #File.open(self.filename, 'a') { |file| file.write(ltext) }
+      # print
       print ltext
       
-      #
+      # return
       ltext
     end
 
     def logf(s, datetime=nil)
       ltext = ""
 #binding.pry if  self.level_children_lines[self.level].to_i > 0
+
+      # clean the caller of the level that I am closing
+      self.level_callers[self.level-1] = nil
+
       # if the parent level has children
       if self.level_children_lines[self.level].to_i > 0
         t = !datetime.nil? ? datetime : Time.now 
@@ -79,9 +112,14 @@ module BlackStack
       # since I am closing a level, set the number of children to 0
       self.level_children_lines[self.level] = 0
 
+      raise LogNestingError.new("Log nesting assertion: Log level went to negative.") if self.level == 0
+
       self.level -= 1
       ltext += s + NEWLINE 
+            
+      # print
       print ltext
+      # return
       ltext
     end
 
