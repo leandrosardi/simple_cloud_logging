@@ -144,6 +144,7 @@ module BlackStack
       caller = caller_locations(0..).last
 #binding.pry if s == '1... '
 #binding.pry if s == '4... '
+#binding.pry if s == "Checking... "
       # if the parent level was called from the same line, I am missing to close the parent.
       if self.level_open_callers[self.level-1].to_s == caller.to_s
         if Logger.nesting_assertion
