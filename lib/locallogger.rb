@@ -5,7 +5,6 @@ module BlackStack
     # call the save method to store the new attributes into the data file
     def reset()
       super
-      BlackStack::LocalLoggerFactory::save(self.filename, self)
     end
 
     # store the min allowed bytes in the variable min
@@ -54,11 +53,6 @@ module BlackStack
       self.write(ltext)
       ltext
     end # def logf
-
-    # 
-    def release()
-      BlackStack::LocalLoggerFactory.release(self.filename)
-    end
 
   end # class LocalLogger
 end # module BlackStack

@@ -18,9 +18,5 @@ module BlackStack
     def logf(s, datetime=nil)      
     end # def logf
 
-    # 
-    def release()
-    end
-
   end # class LocalLogger
 end # module BlackStack
